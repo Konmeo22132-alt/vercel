@@ -9,7 +9,7 @@ export default function handler(req, res) {
     }
 
     if (req.method === "GET") {
-      return res.status(200).json(cache);
+      return res.status(200).json({ count: Object.keys(cache).length, data: cache });
     }
 
     if (req.method === "POST") {
