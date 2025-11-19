@@ -1,61 +1,68 @@
-import fs from "fs";
-import path from "path";
+let cache = {}; // Lưu tạm trong memory – Vercel serverless reset khi sleep
 
-export default async function handler(req, res) {
-  const filePath = path.join(process.cwd(), "keys.json");
+function safeError(res, message, err) {
+  return res.status(500).json({
+    error: message,
+    details: err?.message || err || 'Unknown error'
+  });
+}
 
-  if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, JSON.stringify({}, null, 2));
-
-  const loadKeys = () => JSON.parse(fs.readFileSync(filePath, "utf8"));
-  const saveKeys = (data) => fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-
-  const cleanupExpired = () => {
-    const data = loadKeys();
-    const now = Date.now();
-    const expireMs = 6 * 3600 * 1000; // 6 giờ
-    let changed = false;
-    for (const [k, v] of Object.entries(data)) {
-      const created = new Date(v.create_time).getTime();
-      if (now - created >= expireMs) {
-        delete data[k];
-        changed = true;
-      }
-    }
-    if (changed) saveKeys(data);
-  };
-
-  cleanupExpired();
-
-  if (req.method === "GET") {
-    const data = loadKeys();
-    return res.status(200).json(data);
+function cleanupExpired() {
+  const now = Date.now();
+  const expireMs = 6 * 3600 * 1000; // 6 giờ
+  for (const [key, data] of Object.entries(cache)) {
+    const created = new Date(data.create_time).getTime();
+    if (now - created >= expireMs) delete cache[key]; // Tự động xoá key hết hạn
   }
+}
 
-  if (req.method === "POST") {
-    try {
+export default function handler(req, res) {
+  try {
+    cleanupExpired();
+
+    // 📌 GET – Xem data API
+    if (req.method === 'GET') {
+      if (req.query.raw === 'true') {
+        return res.status(200).json(cache); // XEM FULL DATA
+      }
+
+      const userId = req.query.user;
+      if (userId) {
+        const userData = Object.values(cache).filter(x => x.discord_id_user === userId);
+        return res.status(200).json(userData);
+      }
+
+      return res.status(200).json({
+        count: Object.keys(cache).length,
+        keys: Object.keys(cache).slice(0, 10)
+      });
+    }
+
+    // 📌 POST – Lưu key từ bot
+    if (req.method === 'POST') {
       const { key, create_time, hiwd, discord_id_user } = req.body || {};
-      if (!key || !discord_id_user)
-        return res.status(400).json({ error: "Missing required fields" });
 
-      const data = loadKeys();
-      data[key] = {
-        time: "6",
+      if (!key || !discord_id_user) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      cache[key] = {
+        time: '6',
         create_time: create_time || new Date().toISOString(),
         hiwd,
         discord_id_user,
         expire_at: new Date(Date.now() + 6 * 3600 * 1000).toISOString()
       };
-      saveKeys(data);
 
       return res.status(200).json({
         success: true,
-        message: "Key saved successfully (expires in 6 hours)",
-        data: data[key]
+        message: 'Key saved successfully (expires in 6 hours)',
+        data: cache[key]
       });
-    } catch (err) {
-      return res.status(500).json({ error: "Internal Server Error", details: err.message });
     }
-  }
 
-  return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: 'Method not allowed' });
+  } catch (err) {
+    return safeError(res, 'API crashed', err);
+  }
 }
