@@ -1,26 +1,16 @@
-import fs from "fs";
-import path from "path";
+let cache = {}; // Lưu dữ liệu RAM – không ghi file
 
 export default function handler(req, res) {
   try {
-    const filePath = path.join(process.cwd(), "keys.json");
-    if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, JSON.stringify({}, null, 2));
-
-    const load = () => JSON.parse(fs.readFileSync(filePath, "utf8"));
-    const save = (data) => fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-
     if (req.method === "GET") {
-      return res.status(200).json({ count: Object.keys(load()).length, data: load() });
+      return res.status(200).json({ count: Object.keys(cache).length, data: cache });
     }
 
     if (req.method === "POST") {
-      const data = load();
-
       if (req.body.delete_key) {
-        const keyDel = req.body.delete_key;
-        delete data[keyDel];
-        save(data);
-        return res.status(200).json({ success: true, deleted: keyDel });
+        const k = req.body.delete_key;
+        delete cache[k];
+        return res.status(200).json({ success: true, deleted: k });
       }
 
       const { key, hiwd, discord_id_user, credit, codes_used } = req.body || {};
@@ -28,20 +18,18 @@ export default function handler(req, res) {
         return res.status(400).json({ error: "Missing key or discord_id_user" });
       }
 
-      data[key] = {
+      cache[key] = {
         discord_id_user,
-        hiwd: hiwd || null,
+        hiwd: hiwd || "insigned",
         credit: credit || 0,
         codes_used: codes_used || [],
         create_time: new Date().toISOString()
       };
 
-      save(data);
-      return res.status(200).json({ success: true, data: data[key] });
+      return res.status(200).json({ success: true, data: cache[key] });
     }
 
     return res.status(405).json({ error: "Method Not Allowed" });
-
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
