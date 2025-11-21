@@ -1,5 +1,3 @@
-// vxeze.js (vercel)
-
 import fs from "fs";
 import path from "path";
 
@@ -16,10 +14,20 @@ export default function handler(req, res) {
     }
 
     if (req.method === "POST") {
-      const { key, hiwd, discord_id_user, credit, codes_used } = req.body || {};
-      if (!key || !discord_id_user) return res.status(400).json({ error: "Missing key or discord_id_user" });
-
       const data = load();
+
+      if (req.body.delete_key) {
+        const keyDel = req.body.delete_key;
+        delete data[keyDel];
+        save(data);
+        return res.status(200).json({ success: true, deleted: keyDel });
+      }
+
+      const { key, hiwd, discord_id_user, credit, codes_used } = req.body || {};
+      if (!key || !discord_id_user) {
+        return res.status(400).json({ error: "Missing key or discord_id_user" });
+      }
+
       data[key] = {
         discord_id_user,
         hiwd: hiwd || null,
@@ -27,11 +35,13 @@ export default function handler(req, res) {
         codes_used: codes_used || [],
         create_time: new Date().toISOString()
       };
+
       save(data);
       return res.status(200).json({ success: true, data: data[key] });
     }
 
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ error: "Method Not Allowed" });
+
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
