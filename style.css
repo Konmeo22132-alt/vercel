@@ -32,7 +32,6 @@ body{
   pointer-events: none;
 }
 
-/* scanline + vignette subtle */
 body:before{
   content:"";
   position:fixed;
@@ -52,10 +51,8 @@ body:before{
   z-index: 1;
 }
 
-
-
 /* Put UI above particles */
-.topbar, .main, .intro, .toast, .app { position: relative; z-index: 10; }
+.topbar, .main, .intro, .toast, .app, .gate { position: relative; z-index: 10; }
 
 /* ===== Topbar ===== */
 .topbar{
@@ -64,7 +61,7 @@ body:before{
   height: 54px;
   display:flex;
   align-items:center;
-  z-index: 20;
+  z-index: 40;
   background: rgba(0,0,0,.55);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -93,7 +90,7 @@ body:before{
   gap: 10px;
 }
 
-/* ===== Icon buttons ===== */
+/* Icon buttons */
 .iconbtn{
   width: 30px;
   height: 30px;
@@ -135,7 +132,7 @@ body:before{
   padding: 86px 16px 28px;
 }
 
-/* ✅ KEY VIEWER: MÀU ĐẶC (KHÔNG TRONG SUỐT) */
+/* Card (solid) */
 .card{
   width: min(560px, 92vw);
   border-radius: var(--radius);
@@ -155,7 +152,6 @@ body:before{
   overflow:hidden;
 }
 
-/* highlight nhẹ */
 .card:after{
   content:"";
   position:absolute; inset:-2px;
@@ -266,22 +262,86 @@ body:before{
   line-height:1.4;
 }
 
-/* ===== Intro overlay ===== */
-.app{
-  transition: filter .75s var(--easeOut), opacity .75s var(--easeOut), transform .75s var(--easeOut);
-}
-.app.blurred{
-  filter: blur(14px) saturate(.95);
-  opacity: .18;
-  transform: scale(.992);
-  pointer-events:none;
-  user-select:none;
+/* ===== Gate overlay ===== */
+.gate{
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
+.gate__panel{
+  width: min(420px, 92vw);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(12,14,18,.92);
+  box-shadow: 0 24px 80px rgba(0,0,0,.8);
+  padding: 18px 16px 14px;
+  text-align: center;
+}
+
+.gate__title{
+  font-weight: 850;
+  letter-spacing: .2px;
+  font-size: 16px;
+}
+
+.gate__sub{
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(255,255,255,.58);
+}
+
+.gate__captcha{
+  margin-top: 14px;
+  display:flex;
+  justify-content:center;
+}
+
+.gate__meta{
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.45);
+}
+
+.gate.out{
+  opacity: 0;
+  transform: scale(.99);
+  transition: opacity .22s ease, transform .22s ease;
+}
+
+.gate.shake .gate__panel{
+  animation: shake .45s ease;
+}
+@keyframes shake{
+  0%,100%{ transform: translateX(0); }
+  20%{ transform: translateX(-8px); }
+  40%{ transform: translateX(8px); }
+  60%{ transform: translateX(-6px); }
+  80%{ transform: translateX(6px); }
+}
+
+/* Che mờ ~80% key viewer trước khi pass */
+.app{
+  transition: filter .45s ease, opacity .45s ease, transform .45s ease;
+}
+.app.gated{
+  filter: blur(10px) saturate(.9);
+  opacity: .20;
+  transform: scale(.995);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== Intro overlay ===== */
 .intro{
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 60;
   display:grid;
   place-items:center;
   background: rgba(0,0,0,.55);
@@ -331,7 +391,11 @@ body:before{
   filter: blur(10px);
   animation: logoIn 1.05s var(--easeOut) forwards;
 }
-.intro__logo svg{ width: 80px; height: 80px; opacity:.95; }
+.intro__logo svg{
+  width: 36px;   /* nhỏ vừa */
+  height: auto;
+  filter: drop-shadow(0 6px 18px rgba(255,255,255,.18));
+}
 
 @keyframes logoIn{
   0%{ opacity:0; transform: translateY(16px) scale(.95); filter: blur(12px); }
@@ -493,7 +557,7 @@ body:before{
   pointer-events:none;
   transition: opacity .22s ease, transform .22s ease;
   max-width: min(92vw, 520px);
-  z-index: 60;
+  z-index: 90;
 }
 .toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -513,4 +577,16 @@ body:before{
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ===== Mobile tuning ===== */
+@media (max-width: 480px){
+  .topbar__inner{ padding: 0 12px; }
+  .brand__name{ font-size: 12px; }
+  .card__inner{ padding: 18px 16px 14px; }
+  .title{ font-size: 15px; }
+  .subtitle{ font-size: 12px; }
+  .keyvalue{ max-width: 62%; font-size: 13px; }
+  .btn{ padding: 12px 12px; }
+  #particles-js{ opacity: .75; }
 }
