@@ -16,7 +16,7 @@
   <header class="topbar">
     <div class="topbar__inner">
       <div class="brand">
-        <span class="brand__name">Konmeo22132 x PhucModder</span>
+        <span class="brand__name">Hune Cloud Phone</span>
       </div>
 
       <nav class="topbar__actions" aria-label="Social links">
@@ -42,7 +42,7 @@
   </header>
 
   <!-- APP -->
-  <div class="app blurred" id="app">
+  <div class="app blurred gated" id="app">
     <main class="main">
       <section class="card" role="region" aria-label="Key viewer">
         <div class="card__inner">
@@ -50,15 +50,15 @@
             <div>
               <h1 class="title">Key Viewer</h1>
               <p class="subtitle">
-                Powered by <code>Konmeo22132</code> !
+                Key lấy từ query <code>?keyname=</code> (Base64) — giải mã sau captcha.
               </p>
             </div>
-            <div class="badge" id="badge">Ready</div>
+            <div class="badge" id="badge">Locked</div>
           </div>
 
           <div class="keybox">
-            <div class="keylabel">KEYNAME</div>
-            <div class="keyvalue" id="keyValue" title="">—</div>
+            <div class="keylabel">KEY</div>
+            <div class="keyvalue" id="keyValue" title="">••••••••••••••</div>
           </div>
 
           <div class="actions">
@@ -71,47 +71,57 @@
             </button>
           </div>
 
-          <div class="hint" id="hint">Mở trang với <b>?keyname=YOUR_KEY</b> để hiển thị key.</div>
+          <div class="hint" id="hint">
+            Hoàn thành captcha để hiện key.
+          </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- INTRO -->
-<div class="intro" id="intro" aria-label="Intro">
-  <div class="intro__panel">
-    <div class="intro__row">
-      <div class="intro__logo" aria-hidden="true">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 94.38 122.88"
-          width="48"
-          height="64"
-        >
-          <path
-            d="M8.723,45.706h2.894v-8.729c0-10.139,3.987-19.368,10.412-26.069
-            C28.479,4.177,37.386,0,47.19,0c9.805,0,18.711,4.177,25.163,10.907
-            c6.424,6.701,10.411,15.931,10.411,26.069v8.729h2.894
-            c2.401,0,4.583,0.98,6.162,2.56s2.56,3.761,2.56,6.162v59.73
-            c0,2.401-0.98,4.583-2.56,6.162s-3.761,2.56-6.162,2.56H8.723
-            c-2.402,0-4.583-0.98-6.163-2.56S0,116.56,0,114.158v-59.73
-            c0-2.401,0.981-4.583,2.56-6.162C4.14,46.687,6.321,45.706,8.723,45.706z
+  <!-- CAPTCHA GATE OVERLAY -->
+  <div class="gate" id="gate" aria-label="Verification gate">
+    <div class="gate__panel">
+      <div class="gate__title">Human verification</div>
+      <div class="gate__sub">Complete the captcha to reveal your key.</div>
 
-            M44,87.301L39.81,98.28h14.762l-3.884-11.13
-            c2.465-1.27,4.15-3.84,4.15-6.803c0-4.223-3.425-7.647-7.647-7.647
-            c-4.223,0-7.648,3.425-7.648,7.647
-            C39.542,83.432,41.369,86.091,44,87.301z
-
-            M17.753,45.706h58.875v-8.729
-            c0-8.511-3.326-16.236-8.686-21.826
-            C62.61,9.589,55.265,6.137,47.19,6.137
-            S31.77,9.589,26.438,15.15
-            c-5.359,5.59-8.686,13.315-8.686,21.826V45.706z"
-            fill="rgba(255,255,255,.9)"
-          />
-        </svg>
+      <div class="gate__captcha">
+        <div class="g-recaptcha"
+             data-sitekey="YOUR_RECAPTCHA_SITE_KEY"
+             data-callback="onCaptchaOk"></div>
       </div>
 
+      <div class="gate__meta">
+        Konmeo22132 Bot - KEY SYSTEM
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO (giữ nguyên loading/intro của bạn, nếu bạn đang có) -->
+  <div class="intro" id="intro" aria-label="Intro">
+    <div class="intro__panel">
+      <div class="intro__row">
+        <div class="intro__logo" aria-hidden="true">
+          <!-- LOCK SVG (nhỏ vừa) -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 94.38 122.88">
+            <path d="M8.723,45.706h2.894v-8.729c0-10.139,3.987-19.368,10.412-26.069
+              C28.479,4.177,37.386,0,47.19,0c9.805,0,18.711,4.177,25.163,10.907
+              c6.424,6.701,10.411,15.931,10.411,26.069v8.729h2.894
+              c2.401,0,4.583,0.98,6.162,2.56s2.56,3.761,2.56,6.162v59.73
+              c0,2.401-0.98,4.583-2.56,6.162s-3.761,2.56-6.162,2.56H8.723
+              c-2.402,0-4.583-0.98-6.163-2.56S0,116.56,0,114.158v-59.73
+              c0-2.401,0.981-4.583,2.56-6.162C4.14,46.687,6.321,45.706,8.723,45.706z
+              M44,87.301L39.81,98.28h14.762l-3.884-11.13
+              c2.465-1.27,4.15-3.84,4.15-6.803c0-4.223-3.425-7.647-7.647-7.647
+              c-4.223,0-7.648,3.425-7.648,7.647C39.542,83.432,41.369,86.091,44,87.301z
+              M17.753,45.706h58.875v-8.729
+              c0-8.511-3.326-16.236-8.686-21.826
+              C62.61,9.589,55.265,6.137,47.19,6.137
+              S31.77,9.589,26.438,15.15
+              c-5.359,5.59-8.686,13.315-8.686,21.826V45.706z"
+              fill="rgba(255,255,255,.9)"/>
+          </svg>
+        </div>
 
         <div class="intro__brand">
           <div class="intro__titlewrap">
@@ -139,16 +149,20 @@
     <span id="toastText">Copied</span>
   </div>
 
-  <!-- Particles.js CDN -->
+  <!-- Particles.js -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <!-- Google reCAPTCHA v2 checkbox -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <script>
     /* =========================
-       PARTICLES BACKGROUND CONFIG
+       PARTICLES (mobile optimized)
     ========================= */
+    const isMobile = matchMedia("(max-width: 480px)").matches;
     particlesJS("particles-js", {
       particles: {
-        number: { value: 72, density: { enable: true, value_area: 900 } },
+        number: { value: isMobile ? 44 : 72, density: { enable: true, value_area: 900 } },
         color: { value: "#ffffff" },
         shape: { type: "circle" },
         opacity: { value: 0.32, random: true, anim: { enable: false } },
@@ -162,7 +176,7 @@
         },
         move: {
           enable: true,
-          speed: 0.65,
+          speed: isMobile ? 0.55 : 0.65,
           direction: "none",
           random: true,
           straight: false,
@@ -173,7 +187,7 @@
       interactivity: {
         detect_on: "canvas",
         events: {
-          onhover: { enable: true, mode: ["grab", "repulse"] },
+          onhover: { enable: !isMobile, mode: ["grab", "repulse"] },
           onclick: { enable: false },
           resize: true
         },
@@ -186,22 +200,12 @@
     });
 
     /* =========================
-       KEY VIEWER
+       TOAST
     ========================= */
-    const qs = new URLSearchParams(location.search);
-    const key = (qs.get("keyname") || "").trim();
-
-    const keyValueEl = document.getElementById("keyValue");
-    const copyBtn = document.getElementById("copyBtn");
-    const badge = document.getElementById("badge");
-    const hint = document.getElementById("hint");
-
     const toast = document.getElementById("toast");
     const toastText = document.getElementById("toastText");
     const toastDot = document.getElementById("toastDot");
     let toastTimer = null;
-
-    function setBadge(t){ badge.textContent = t; }
 
     function showToast(message, ok = true){
       toastText.textContent = message;
@@ -211,20 +215,44 @@
       toastTimer = setTimeout(() => toast.classList.remove("show"), 1500);
     }
 
-    function renderKey(){
-      if(!key){
-        keyValueEl.textContent = "—";
-        keyValueEl.title = "";
-        copyBtn.disabled = true;
-        setBadge("No key");
-        hint.innerHTML = 'Chưa có key. Thử: <b>?keyname=ABC-123</b>';
-        return;
+    /* =========================
+       KEY + BASE64 DECODE AFTER CAPTCHA
+    ========================= */
+    const appEl   = document.getElementById("app");
+    const gateEl  = document.getElementById("gate");
+    const badge   = document.getElementById("badge");
+    const hint    = document.getElementById("hint");
+    const keyEl   = document.getElementById("keyValue");
+    const copyBtn = document.getElementById("copyBtn");
+
+    const qs = new URLSearchParams(location.search);
+    const keyB64 = (qs.get("keyname") || "").trim();
+
+    // Display masked initially
+    function setMaskedState(){
+      keyEl.textContent = "••••••••••••••";
+      keyEl.title = "";
+      badge.textContent = "Locked";
+      hint.textContent = "Hoàn thành captcha để hiện key.";
+      copyBtn.disabled = true;
+    }
+    setMaskedState();
+
+    function decodeBase64Flexible(input){
+      if(!input) return "";
+      // support url-safe base64
+      let s = input.replace(/-/g, "+").replace(/_/g, "/");
+      while (s.length % 4) s += "=";
+
+      try{
+        // handle utf-8 safely
+        const binary = atob(s);
+        const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+        const decoded = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+        return decoded.trim();
+      }catch(e){
+        return "";
       }
-      keyValueEl.textContent = key;
-      keyValueEl.title = key;
-      copyBtn.disabled = false;
-      setBadge("Loaded");
-      hint.textContent = "Nhấn “Copy key” để sao chép.";
     }
 
     async function copyToClipboard(text){
@@ -245,30 +273,60 @@
     }
 
     copyBtn.addEventListener("click", async () => {
-      if(!key) return;
+      const text = keyEl.textContent || "";
+      if(!text || text.includes("•")) return;
+
       copyBtn.disabled = true;
-      setBadge("Copying…");
+      badge.textContent = "Copying…";
       try{
-        await copyToClipboard(key);
+        await copyToClipboard(text);
         showToast("Đã copy key", true);
-        setBadge("Copied");
+        badge.textContent = "Copied";
       }catch(e){
         showToast("Không thể copy (hãy dùng HTTPS)", false);
-        setBadge("Error");
+        badge.textContent = "Error";
       }finally{
         setTimeout(() => {
-          copyBtn.disabled = !key;
-          setBadge(key ? "Loaded" : "No key");
+          copyBtn.disabled = false;
+          badge.textContent = "Loaded";
         }, 450);
       }
     });
 
-    renderKey();
+    // Called by reCAPTCHA when success
+    window.onCaptchaOk = function onCaptchaOk(token){
+      // token exists, but this is CLIENT-ONLY gate
+      // decode base64 key and reveal
+      const decoded = decodeBase64Flexible(keyB64);
+
+      if(!decoded){
+        showToast("Key không hợp lệ (base64)", false);
+        gateEl.classList.add("shake");
+        setTimeout(() => gateEl.classList.remove("shake"), 500);
+        return;
+      }
+
+      keyEl.textContent = decoded;
+      keyEl.title = decoded;
+
+      badge.textContent = "Loaded";
+      hint.textContent = "Nhấn “Copy key” để sao chép.";
+      copyBtn.disabled = false;
+
+      // hide gate + unblur app
+      gateEl.classList.add("out");
+      appEl.classList.remove("gated");
+
+      setTimeout(() => {
+        gateEl.style.display = "none";
+      }, 260);
+
+      showToast("Verified", true);
+    };
 
     /* =========================
-       INTRO LOADING
+       INTRO LOADING (giữ như cũ)
     ========================= */
-    const app = document.getElementById("app");
     const intro = document.getElementById("intro");
     const introTitle = document.getElementById("introTitle");
     const barFill = document.getElementById("barFill");
@@ -335,7 +393,6 @@
       await sleep(280);
 
       intro.classList.add("fadeout");
-      app.classList.remove("blurred");
       setTimeout(() => intro.remove(), 720);
     }
 
