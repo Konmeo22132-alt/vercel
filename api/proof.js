@@ -8,9 +8,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, error: "missing_fields" });
   }
 
-  const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET; // v3 secret
-  const HMAC_SECRET = process.env.HMAC_SECRET;           // giống bên bot
-  const SCORE_MIN = parseFloat(process.env.RECAPTCHA_SCORE_MIN || "0.5"); // 0.3~0.7 tùy bạn
+  const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
+  const HMAC_SECRET = process.env.HMAC_SECRET;
 
   if (!RECAPTCHA_SECRET || !HMAC_SECRET) {
     return res.status(500).json({ ok: false, error: "missing_env" });
@@ -30,19 +29,7 @@ export default async function handler(req, res) {
   }
 
   if (!v.success) {
-    return res.status(403).json({ ok: false, error: "captcha_failed", details: v["error-codes"] || [] });
-  }
-
-  // reCAPTCHA v3 trả score + action (nếu bạn set action ở client)
-  const score = typeof v.score === "number" ? v.score : -1;
-  const action = (v.action || "").toString();
-
-  if (action !== "proof") {
-    return res.status(403).json({ ok: false, error: "bad_action", action });
-  }
-
-  if (!(score >= SCORE_MIN)) {
-    return res.status(403).json({ ok: false, error: "low_score", score, min: SCORE_MIN });
+    return res.status(403).json({ ok: false, error: "captcha_failed" });
   }
 
   const ts = Math.floor(Date.now() / 1000);
@@ -53,6 +40,5 @@ export default async function handler(req, res) {
     ok: true,
     code: `${keyname}:${ts}.${hmac}`,
     ts,
-    score,
   });
 }
